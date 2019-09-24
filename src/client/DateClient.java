@@ -5,39 +5,33 @@ import java.io.*;
 import java.net.*;
 
 public class DateClient {
-	
-	private String serverIP;
-	private Socket sock;
-	private DataInputStream inputStream;
-	private DataOutputStream outputStream;
-	private Scanner scanner;
-	
-	public DateClient() {
+	public static void main(String[] args) {
 		try {
 			System.out.print("Enter date server IP address:");
-			scanner = new Scanner(System.in);
-			serverIP = scanner.nextLine();
-			scanner.close();
-			sock = new Socket(serverIP, 33333);
-			inputStream = new DataInputStream(sock.getInputStream());
-			outputStream = new DataOutputStream(sock.getOutputStream());
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-	}
-	
-	private void getDate() {
-		try {
+			Scanner scanner = new Scanner(System.in);
+			String serverIP = scanner.nextLine();
+			Socket sock = new Socket(serverIP, 33333);
+			DataInputStream inputStream = new DataInputStream(sock.getInputStream());
+			DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
 			System.out.println(inputStream.readUTF());
-			outputStream.writeUTF("Received");
-			outputStream.flush();
+			String command;
+			boolean running = true;
+			while (running) {
+				System.out.println("Please enter a command: ");
+				command = scanner.nextLine();
+				if (command.equals("")) {
+					System.out.println("Closing connection");
+					sock.close();
+					running = false;
+				} else {
+					outputStream.writeUTF(command);
+					outputStream.flush();
+					System.out.println(inputStream.readUTF());
+				}
+			}
+			scanner.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-	}
-	
-	public static void main(String[] args) {
-		DateClient dateClient = new DateClient();
-		dateClient.getDate();
 	}
 }
