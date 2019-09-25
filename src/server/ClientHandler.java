@@ -42,7 +42,6 @@ public class ClientHandler extends Thread {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
         }
     }
 }
